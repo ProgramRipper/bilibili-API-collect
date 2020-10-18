@@ -263,3 +263,137 @@ SESSDATA=(登录token)&
 bili_jct=(csrf)&
 
 gourl=(跳转网址 默认为主页)
+
+## 发送短信验证码
+
+> http://passport.bilibili.com/pc/check/sec/sendSms
+
+*请求方式：POST*
+
+短信发送CD时间为60s
+
+短信验证码超时时间为5min
+
+**正文参数（ application/x-www-form-urlencoded ）：**
+
+| 参数名 | 类型 | 内容    | 必要性 | 备注 |
+| ------ | ---- | ------- | ------ | ---- |
+| mid    | num  | 用户UID | 必要   |      |
+| type   | num  |    11     | 必要   |   必须为`11`   |
+
+**json回复**
+
+根对象：
+
+| 字段   | 类型 | 内容     | 备注         |
+| ------ | ---- | -------- | --------- |
+|code|num|返回值|0：成功<br />-400：请求错误<br />-601：参数错误<br />-857：验证码已发送<br />-10006：请到登录页重新登录|
+|data|str|错误信息|“请求错误”时不存在<br />成功为“验证码发送成功”|
+|message|str|错误信息|成功为“验证码发送成功”|
+|status|bool|是否发送成功|false：发送失败<br />true：发送成功|
+|ts|num|时间戳||
+
+**示例**
+
+向`mid=2`的用户发送短信验证码
+
+```shell
+curl 'http://passport.bilibili.com/pc/check/sec/sendSms'
+--data-urlencode 'mid=2'\
+--data-urlencode 'type=11'
+```
+
+<details>
+<summary>查看响应示例：</summary>
+
+```json
+{
+    "code":0,
+    "data":"验证码发送成功",
+    "message":"验证码发送成功",
+    "status":true,
+    "ts":1602081294
+}
+```
+</details>
+
+## 发送邮件验证码
+
+> http://passport.bilibili.com/pc/check/sec/sendMail
+
+*请求方式：POST*
+
+短信发送CD时间为60s
+
+短信验证码超时时间为5min
+
+**正文参数（ application/x-www-form-urlencoded ）：**
+
+| 参数名 | 类型 | 内容    | 必要性 | 备注 |
+| ------ | ---- | ------- | ------ | ---- |
+| mid    | num  | 用户UID | 必要   |      |
+| type   | num  |    12     | 必要   |   必须为`12`   |
+
+**json回复**
+
+根对象：
+
+| 字段   | 类型 | 内容     | 备注         |
+| ------ | ---- | -------- | --------- |
+|code|num|返回值|0：成功<br />-105：验证码错误<br />-400：请求错误<br />-601：参数错误<br />-857：验证码已发送<br />-10006：请到登录页重新登录|
+|data|str|错误信息|“请求错误”时不存在<br />成功为“验证码发送成功”|
+|message|str|错误信息|成功为“验证码发送成功”|
+|status|bool|是否发送成功|false：发送失败<br />true：发送成功|
+|ts|num|时间戳||
+
+**示例**
+
+向`mid=2`的用户发送邮件验证码
+
+```shell
+curl 'http://passport.bilibili.com/pc/check/sec/sendMail'
+--data-urlencode 'mid=2'\
+--data-urlencode 'type=11'
+```
+
+<details>
+<summary>查看响应示例：</summary>
+
+```json
+{
+    "code":0,
+    "data":"验证码发送成功",
+    "message":"验证码发送成功",
+    "status":true,
+    "ts":1602081294
+}
+```
+</details>
+
+##  输入验证码继续登录
+
+> http://passport.bilibili.com/web/sl/login
+
+*请求方式：POST*
+
+验证登录成功后会进行设置以下cookie项：
+
+ `DedeUserID` `DedeUserID__ckMd5` `SESSDATA` `bili_jct`
+
+**正文参数（ application/x-www-form-urlencoded ）：**
+
+| 参数名 | 类型 | 内容 | 必要性 | 备注 |
+| --- | --- | --- | --- | --- |
+|mid|num|用户uid|必要||
+|code|num|验证码|必要||
+|type|num|验证码类型|必要|0：邮件验证码<br />1:短信验证码|
+|keepTime|num|1|必要|必须为`1`|
+|source|num|0|必要|必须为`0`|
+|goUrl|str|跳转url|非必要|默认为https://passport.bilibili.com/member/loginsuccess.html|
+
+**json回复**
+
+根对象：
+
+**示例：**
+
